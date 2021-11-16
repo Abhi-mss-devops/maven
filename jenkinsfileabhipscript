@@ -1,0 +1,33 @@
+node{
+def mavenHome = tool name: "maven3.8.3"
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+stage('CheckOutCode'){
+git branch: 'development', credentialsId: '6cd05bf3-18dc-4cd0-9434-d7441679b82a', url: 'https://github.com/Abhi-mss-devops/maven.git'
+}
+
+stage('Build'){
+sh "${mavenHome}/bin/mvn clean package"
+}
+
+/*
+stage('ExecuteSonarQubeReport'){
+sh "${mavenHome}/bin/mvn clean sonar:sonar"
+}
+
+stage('UploadArtifactsIntoNexusRepo'){
+sh "${mavenHome}/bin/mvn deploy"
+}
+
+stage('DeployAppIntoTomcatServer'){
+sshagent(['9576cb9c-2b5a-4081-bb86-00e5700a373c']) {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@3.6.39.221:/opt/apache-tomcat-9.0.54/webapps/"
+}
+
+stage('SendEmailNotification'){
+mail bcc: '', body: '''Build final.
+
+Regards,
+Abhilash Malagimani''', cc: 'abhi.comp1993@gmail.com', from: '', replyTo: '', subject: 'Build final', to: 'nahidbvb@gmail.com'
+}
+*/
+}
